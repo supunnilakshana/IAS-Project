@@ -3,6 +3,7 @@ import 'package:google_fonts/google_fonts.dart';
 
 import 'package:smsapp/constans/constansts.dart';
 import 'package:smsapp/screens/home/home_screen.dart';
+import 'package:smsapp/screens/welcome_screen/welcome_screen.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
@@ -25,7 +26,7 @@ class MyApp extends StatelessWidget {
           Theme.of(context).textTheme,
         ),
       ),
-      home: HomeScreen(),
+      home: WelcomeScreen(),
     );
   }
 }

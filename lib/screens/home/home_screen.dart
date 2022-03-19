@@ -28,7 +28,8 @@ class _HomeScreenState extends State<HomeScreen> {
         floatingActionButton: FloatingActionButton.extended(
           onPressed: () {
             Navigator.push(context,
-                MaterialPageRoute(builder: (context) => SingelChatScreen()));
+                    MaterialPageRoute(builder: (context) => SingelChatScreen()))
+                .then((val) => val ? loaddata() : null);
           },
           label: Text(
             "Start chat",
@@ -77,14 +78,22 @@ class _HomeScreenState extends State<HomeScreen> {
                             ScrollViewKeyboardDismissBehavior.onDrag,
                         itemCount: data.length,
                         itemBuilder: (context, index) {
+                          String imgurl = "assets/icons/user3.png";
+                          if (data[index].imgurl == null ||
+                              data[index].imgurl == "") {
+                            imgurl = "assets/icons/user3.png";
+                          } else {
+                            imgurl = data[index].imgurl!;
+                          }
+                          String subtitel = "your message";
                           return Card(
                             elevation: 0,
                             shadowColor: kbackgoundcolor,
                             color: kbackgoundcolor,
                             child: ListTile(
-                              leading: Image.asset("assets/icons/user3.png"),
+                              leading: Image.asset(imgurl),
                               title: Text(
-                                "070 412 6017",
+                                data[index].mobileno,
                                 style: TextStyle(
                                     fontSize: size.width * 0.05,
                                     color: kdefualtfontcolor.withOpacity(0.9)),

@@ -18,8 +18,7 @@ class SingelChatScreen extends StatefulWidget {
   final bool isnew;
   final String mobile;
 
-  const SingelChatScreen(
-      {Key? key, this.isnew = false, this.mobile = "0763080158"})
+  const SingelChatScreen({Key? key, this.isnew = true, this.mobile = ""})
       : super(key: key);
   @override
   _SingelChatScreenState createState() => _SingelChatScreenState();
@@ -56,18 +55,26 @@ class _SingelChatScreenState extends State<SingelChatScreen> {
       child: GestureDetector(
         onTap: () => FocusScope.of(context).unfocus(),
         child: Scaffold(
-          floatingActionButtonLocation: FloatingActionButtonLocation.centerTop,
-          floatingActionButton: FloatingActionButton(
-            onPressed: () async {
-              List<MsgModel> data =
-                  await LocalDbHandeler.getallmsgs(mobileNocon.text);
-              data.forEach((element) {
-                print(element.message);
-              });
-            },
-          ),
+          // floatingActionButtonLocation: FloatingActionButtonLocation.centerTop,
+          // floatingActionButton: FloatingActionButton(
+          //   onPressed: () async {
+          //     List<MsgModel> data =
+          //         await LocalDbHandeler.getallmsgs(mobileNocon.text);
+          //     data.forEach((element) {
+          //       print(element.message);
+          //     });
+          //   },
+          // ),
           backgroundColor: kbackgoundcolor,
           appBar: AppBar(
+            leading: IconButton(
+                onPressed: () {
+                  Navigator.pop(context, true);
+                },
+                icon: Icon(
+                  Icons.arrow_back_ios_new_rounded,
+                  color: Colors.white,
+                )),
             title: Row(
               children: [
                 Expanded(
@@ -334,6 +341,8 @@ class _SingelChatScreenState extends State<SingelChatScreen> {
                                   int res =
                                       await LocalDbHandeler.checkchatstaus(
                                           mobileNo);
+                                  print("-------------------------------" +
+                                      res.toString());
                                   if (res == 0) {
                                     int scno = random.nextInt(3);
                                     String imgurl;
@@ -347,28 +356,35 @@ class _SingelChatScreenState extends State<SingelChatScreen> {
                                     ChatModel chatModel = ChatModel(
                                         mobileno: mobileNo,
                                         newmsgcount: 0,
-                                        imgurl: '');
-                                    LocalDbHandeler.createnewchat(chatModel);
+                                        imgurl: imgurl);
+                                    int chatres =
+                                        await LocalDbHandeler.createnewchat(
+                                            chatModel);
+                                    if (chatres == 0) {
+                                      print("chat is created");
+                                    }
                                   }
+                                  isnewchat = false;
                                 } else {
                                   mobileNo = widget.mobile;
                                 }
-                                setState(() {
-                                  isnewchat = false;
-                                });
+
                                 // await SmsService.sendSMS(
                                 //     mobileNocon.text, messegecon.text, listener);
                                 MsgModel msgModel = MsgModel(
                                     mobileno: mobileNo,
                                     message:
-                                        "asssssssssssssssssss", // messegecon.text,
+                                        messegecon.text, // messegecon.text,
                                     status: "sent",
                                     hash: "hash",
-                                    msgtype: 1,
+                                    msgtype: 0,
                                     datetime: Date.getMsgDate());
                                 await LocalDbHandeler.addnewmsg(msgModel);
                                 messegecon.clear();
                                 loaddata();
+                                setState(() {
+                                  isnewchat = false;
+                                });
                               }
                             },
                           ),
