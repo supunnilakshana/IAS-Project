@@ -5,6 +5,8 @@ import 'package:smsapp/constans/constansts.dart';
 import 'package:smsapp/screens/home/home_screen.dart';
 
 void main() {
+  WidgetsFlutterBinding.ensureInitialized();
+
   runApp(MyApp());
 }
 
@@ -14,6 +16,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Secure SMS',
+      debugShowCheckedModeBanner: false,
       theme: ThemeData(
         primaryColor: kprimaryColor,
         backgroundColor: kbackgoundcolor,

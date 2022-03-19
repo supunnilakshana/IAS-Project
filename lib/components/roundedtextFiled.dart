@@ -60,7 +60,7 @@ class RoundedInputWithControll extends StatefulWidget {
 
   const RoundedInputWithControll({
     Key? key,
-    this.hintText = "Your Email",
+    this.hintText = "Type your text . . .",
     this.icon = Icons.person,
     required this.onchange,
     required this.valid,
@@ -89,8 +89,9 @@ class _RoundedInputWithControllState extends State<RoundedInputWithControll> {
         onSaved: widget.save,
         validator: widget.valid,
         keyboardType: widget.textinput,
-
+        style: TextStyle(color: kdefualtfontcolor.withOpacity(0.9)),
         decoration: InputDecoration(
+            hintStyle: TextStyle(color: kdefualtfontcolor.withOpacity(0.9)),
             icon: Icon(widget.icon, color: Colors.white),
             hintText: widget.hintText,
             border: InputBorder.none),

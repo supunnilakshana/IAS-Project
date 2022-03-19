@@ -119,6 +119,14 @@ class Date {
     }
     print(between);
   }
+
+  static String getMsgDate() {
+    String datetime = "";
+    var dateParse = DateTime.now();
+
+    String date = "${dateParse.day}/${dateParse.month}/${dateParse.year}";
+    return datetime = date;
+  }
 }
 
 class RemainingTime {
