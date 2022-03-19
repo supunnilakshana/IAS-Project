@@ -13,7 +13,7 @@ class LocalDbHandeler {
           "CREATE TABLE msg(id INTEGER PRIMARY KEY AUTOINCREMENT, mobileno TEXT NOT NULL, message TEXT NOT NULL, msgtype INTEGER NOT NULL, status TEXT NOT NULL, hash TEXT, datetime TEXT NOT NULL)",
         );
         await database.execute(
-          "CREATE TABLE chat(mobileno TEXT PRIMARY KEY,newmsgcount newmsg INTEGER NOT NULL)",
+          "CREATE TABLE chat(mobileno TEXT PRIMARY KEY,newmsgcount newmsg INTEGER NOT NULL, imgurl TEXT)",
         );
       },
       version: 1,
@@ -65,12 +65,18 @@ class LocalDbHandeler {
   }
 
   static Future<int> checkchatstaus(String mobile) async {
-    final Database db = await initializeDB();
-    final List<Map<String, Object?>> queryResult = await db.query(
-      'chat',
-      where: "mobileno = ?",
-      whereArgs: [mobile],
-    );
-    return queryResult.length;
+    int res = 0;
+    try {
+      final Database db = await initializeDB();
+      final List<Map<String, Object?>> queryResult = await db.query(
+        'chat',
+        where: "mobileno = ?",
+        whereArgs: [mobile],
+      );
+      queryResult.length;
+    } on Exception catch (e) {
+      print(e);
+    }
+    return res;
   }
 }

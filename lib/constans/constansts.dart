@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
-const kprimaryColor = Color(0xFF0747f7);
+const kprimaryColor = Color(0xFF0091EA);
+const kprimaryColordark = Color(0xFF0747f7);
 const kprimarylightcolor = Color(0xFFF1E6FF);
 const kheadingcolorlight = Color(0xFF334d4d);
 const kmenucolor = Color(0xFF603a99);
