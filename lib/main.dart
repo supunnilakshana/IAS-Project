@@ -1,13 +1,26 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 import 'package:smsapp/constans/constansts.dart';
+import 'package:smsapp/models/msg_model.dart';
 import 'package:smsapp/screens/home/home_screen.dart';
 import 'package:smsapp/screens/welcome_screen/welcome_screen.dart';
+import 'package:smsapp/service/database/localdb_handeler.dart';
+import 'package:smsapp/service/notrification_service/notification_service.dart';
+import 'package:smsapp/service/validation/date.dart';
+import 'package:telephony/telephony.dart';
+import 'package:vibration/vibration.dart';
 
-void main() {
+backgrounMessageHandler(SmsMessage message) async {
+  Vibration.vibrate(duration: 500);
+  print("msg awaa");
+}
+
+void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-
+  await NotificationService().init();
   runApp(MyApp());
 }
 
