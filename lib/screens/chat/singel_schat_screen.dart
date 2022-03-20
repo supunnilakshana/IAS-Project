@@ -5,10 +5,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter_sms/flutter_sms.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:line_icons/line_icon.dart';
+import 'package:smsapp/components/components/popup_dilog.dart';
 import 'package:smsapp/components/roundedtextFiled.dart';
+import 'package:smsapp/components/tots.dart';
 import 'package:smsapp/constans/constansts.dart';
 import 'package:smsapp/models/chat_model.dart';
 import 'package:smsapp/models/msg_model.dart';
+import 'package:smsapp/screens/home/home_screen.dart';
 import 'package:smsapp/service/database/localdb_handeler.dart';
 import 'package:smsapp/service/notrification_service/notification_service.dart';
 import 'package:smsapp/service/sms_service/sms_service.dart';
@@ -19,8 +22,10 @@ import 'package:telephony/telephony.dart';
 class SingelChatScreen extends StatefulWidget {
   final bool isnew;
   final String mobile;
+  final ChatModel? chatModel;
 
-  const SingelChatScreen({Key? key, this.isnew = true, this.mobile = ""})
+  const SingelChatScreen(
+      {Key? key, this.isnew = true, this.mobile = "", this.chatModel})
       : super(key: key);
   @override
   _SingelChatScreenState createState() => _SingelChatScreenState();
@@ -37,6 +42,7 @@ class _SingelChatScreenState extends State<SingelChatScreen> {
   late bool isnewchat;
   late Future<List<MsgModel>> futureData;
   Random random = new Random();
+  late ChatModel chatModel;
 
   @override
   void initState() {
@@ -45,6 +51,7 @@ class _SingelChatScreenState extends State<SingelChatScreen> {
     setState(() {});
     late Timer _timer;
     if (!isnewchat) {
+      chatModel = widget.chatModel!;
       loaddata();
       _timer = Timer.periodic(Duration(seconds: 5), (timer) => loaddata());
     }
@@ -65,19 +72,19 @@ class _SingelChatScreenState extends State<SingelChatScreen> {
         child: GestureDetector(
           onTap: () => FocusScope.of(context).unfocus(),
           child: Scaffold(
-            floatingActionButtonLocation:
-                FloatingActionButtonLocation.centerTop,
-            floatingActionButton: FloatingActionButton(
-              onPressed: () async {
-                NotificationService.shownotication(
-                    10000, "0763080158", "Thismsg for u");
-                // List<MsgModel> data =
-                //     await LocalDbHandeler.getallmsgs(mobileNocon.text);
-                // data.forEach((element) {
-                //   print(element.message);
-                // });
-              },
-            ),
+            // floatingActionButtonLocation:
+            //     FloatingActionButtonLocation.centerTop,
+            // floatingActionButton: FloatingActionButton(
+            //   onPressed: () async {
+            //     NotificationService.shownotication(
+            //         Date.getTimeId(), "0763080158", "Thismsg for u");
+            //     // List<MsgModel> data =
+            //     //     await LocalDbHandeler.getallmsgs(mobileNocon.text);
+            //     // data.forEach((element) {
+            //     //   print(element.message);
+            //     // });
+            //   },
+            // ),
             backgroundColor: kbackgoundcolor,
             appBar: AppBar(
               leading: IconButton(
@@ -121,7 +128,19 @@ class _SingelChatScreenState extends State<SingelChatScreen> {
                     right: size.width * 0.06,
                   ),
                   child: GestureDetector(
-                    onTap: () {},
+                    onTap: () {
+                      PopupDialog.showPopupdelete(
+                          context, "Are you sure to delete this chat",
+                          () async {
+                        await LocalDbHandeler.clearallmsg(widget.mobile);
+                        await LocalDbHandeler.clearachat(widget.mobile);
+                        Navigator.pushReplacement(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => HomeScreen()));
+                        Customtost.delete();
+                      });
+                    },
                     child: LineIcon.alternateTrash(
                       size: size.width * 0.07,
                       color: kdefualtfontcolor.withOpacity(0.9),
@@ -377,21 +396,23 @@ class _SingelChatScreenState extends State<SingelChatScreen> {
                                       } else {
                                         imgurl = "assets/icons/user3.png";
                                       }
-                                      ChatModel chatModel = ChatModel(
+                                      ChatModel chatmodel = ChatModel(
                                           mobileno: mobileNo,
                                           newmsgcount: 0,
                                           imgurl: imgurl);
                                       int chatres =
                                           await LocalDbHandeler.createnewchat(
-                                              chatModel);
+                                              chatmodel);
                                       if (chatres == 0) {
                                         print("chat is created");
                                       }
+                                      chatModel = chatmodel;
                                     }
                                     isnewchat = false;
                                   } else {
                                     mobileNo = widget.mobile;
                                   }
+                                  chatModel.lastmessage = messegecon.text;
 
                                   await SmsService.sendSMS(
                                       mobileNo, messegecon.text, listener);
@@ -404,6 +425,7 @@ class _SingelChatScreenState extends State<SingelChatScreen> {
                                       msgtype: 0,
                                       datetime: Date.getMsgDate());
                                   await LocalDbHandeler.addnewmsg(msgModel);
+                                  await LocalDbHandeler.updatechat(chatModel);
                                   messegecon.clear();
                                   loaddata();
                                   setState(() {
@@ -427,8 +449,10 @@ class _SingelChatScreenState extends State<SingelChatScreen> {
   }
 
   loaddata() {
-    setState(() {
-      futureData = LocalDbHandeler.getallmsgs(mobileNo);
-    });
+    if (mounted) {
+      setState(() {
+        futureData = LocalDbHandeler.getallmsgs(mobileNo);
+      });
+    }
   }
 }

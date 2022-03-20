@@ -5,12 +5,15 @@ import 'package:smsapp/constans/constansts.dart';
 import 'package:smsapp/models/chat_model.dart';
 import 'package:smsapp/screens/chat/singel_schat_screen.dart';
 import 'package:smsapp/service/database/localdb_handeler.dart';
+import 'package:smsapp/service/notrification_service/notification_service.dart';
 import 'package:smsapp/service/sms_service/sms_service.dart';
+import 'package:smsapp/service/validation/date.dart';
 import 'package:telephony/telephony.dart';
 
 onBackgroundMessage(SmsMessage message) {
   debugPrint("onBackgroundMessage called");
-  // SmsService.listnSMS(message);
+
+  SmsService.listnSMS(message);
 }
 
 class HomeScreen extends StatefulWidget {
@@ -30,14 +33,9 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   onMessage(SmsMessage message) async {
-    SmsService.listnSMS(message);
-    setState(() {
-      // String adress = message.address!;
-      // String fomataddress = adress.replaceAll('+94', '0');
-      // print(message.body);
-      // print(message.address);
-      // print(fomataddress + "-----------------------------------");
-    });
+    await SmsService.listnSMS(message);
+    loaddata();
+    setState(() {});
   }
 
   onSendStatus(SendStatus status) {
@@ -53,8 +51,9 @@ class _HomeScreenState extends State<HomeScreen> {
       telephony.listenIncomingSms(
           onNewMessage: onMessage, onBackgroundMessage: onBackgroundMessage);
     }
-
+    loaddata();
     if (!mounted) return;
+    setState(() {});
   }
 
   @override
@@ -126,14 +125,26 @@ class _HomeScreenState extends State<HomeScreen> {
                               imgurl = data[index].imgurl!;
                             }
                             String subtitel = "your message";
+                            bool isread = true;
+
+                            if (data[index].newmsgcount == 0) {
+                              isread = true;
+                            } else {
+                              isread = false;
+                            }
+                            print(data[index].newmsgcount);
                             return GestureDetector(
-                              onTap: () {
+                              onTap: () async {
+                                ChatModel chatModel = data[index];
+                                chatModel.newmsgcount = 0;
+                                await LocalDbHandeler.updatechat(chatModel);
                                 Navigator.push(
                                     context,
                                     MaterialPageRoute(
                                         builder: (context) => SingelChatScreen(
                                               isnew: false,
                                               mobile: data[index].mobileno,
+                                              chatModel: data[index],
                                             ))).then(
                                     (val) => val ? loaddata() : null);
                               },
@@ -143,27 +154,49 @@ class _HomeScreenState extends State<HomeScreen> {
                                 color: kbackgoundcolor,
                                 child: ListTile(
                                   leading: Image.asset(imgurl),
-                                  title: Text(
-                                    data[index].mobileno,
-                                    style: TextStyle(
-                                        fontSize: size.width * 0.05,
-                                        color:
-                                            kdefualtfontcolor.withOpacity(0.9)),
-                                  ),
+                                  title: Text(data[index].mobileno,
+                                      style: isread
+                                          ? TextStyle(
+                                              fontSize: size.width * 0.05,
+                                              color: kdefualtfontcolor
+                                                  .withOpacity(0.9))
+                                          : TextStyle(
+                                              fontSize: size.width * 0.05,
+                                              color: kdefualtfontcolor,
+                                              fontWeight: FontWeight.w600)),
                                   subtitle: Row(
                                     children: [
                                       Expanded(
                                         child: Text(
-                                          "This msg is erer  we",
-                                          style: TextStyle(
-                                              fontSize: size.width * 0.04,
-                                              color: kdefualtfontcolor
-                                                  .withOpacity(0.8)),
+                                          data[index].lastmessage != null
+                                              ? data[index].lastmessage!
+                                              : "Draft message",
+                                          style: isread
+                                              ? TextStyle(
+                                                  fontSize: size.width * 0.04,
+                                                  color: kdefualtfontcolor
+                                                      .withOpacity(0.8))
+                                              : TextStyle(
+                                                  fontSize: size.width * 0.04,
+                                                  color: kdefualtfontcolor,
+                                                  fontWeight: FontWeight.w500),
                                           overflow: TextOverflow.ellipsis,
                                           maxLines: 2,
                                         ),
                                       ),
                                     ],
+                                  ),
+                                  trailing: Visibility(
+                                    visible: isread == false,
+                                    child: Padding(
+                                      padding: EdgeInsets.only(
+                                          right: size.width * 0.04),
+                                      child: Icon(
+                                        Icons.circle,
+                                        color: kprimaryColordark,
+                                        size: size.width * 0.04,
+                                      ),
+                                    ),
                                   ),
                                 ),
                               ),

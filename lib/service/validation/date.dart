@@ -87,6 +87,18 @@ class Date {
         .replaceAll(".", "");
   }
 
+  static int getTimeId() {
+    String date = DateTime.now()
+        .toString()
+        .replaceAll("-", "")
+        .replaceAll(":", "")
+        .replaceAll(" ", "")
+        .replaceAll(".", "");
+    String newString = date.substring(date.length - 4);
+
+    return int.parse(newString);
+  }
+
   static String greeting() {
     String greeet = "";
     var datetime = DateTime.now();

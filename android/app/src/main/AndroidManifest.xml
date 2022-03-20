@@ -6,7 +6,7 @@
     <uses-permission android:name="android.permission.READ_SMS"/>
     <uses-permission android:name="android.permission.RECEIVE_SMS"/>
    <application
-        android:label="smsapp"
+        android:label="Secure SMS"
         android:icon="@mipmap/launcher_icon">
         <activity
             android:name=".MainActivity"

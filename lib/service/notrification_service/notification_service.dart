@@ -1,4 +1,6 @@
+import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:smsapp/screens/chat/singel_schat_screen.dart';
 
 class NotificationService {
   static final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
@@ -35,7 +37,17 @@ class NotificationService {
   }
 
   Future selectNotification(String? payload) async {
-    //Handle notification tapped logic here
+    // BuildContext? context;
+    // if (payload != null) {
+    //   debugPrint('notification payload: $payload');
+    // }
+    // await Navigator.push(
+    //   context!,
+    //   MaterialPageRoute<void>(
+    //       builder: (context) => SingelChatScreen(
+    //             isnew: false,
+    //           )),
+    // );
   }
 
   static void shownotication(int id, String mobileNo, String msg) async {
@@ -48,6 +60,6 @@ class NotificationService {
     const NotificationDetails platformChannelSpecifics =
         NotificationDetails(android: androidPlatformChannelSpecifics);
     await flutterLocalNotificationsPlugin
-        .show(id, mobileNo, msg, platformChannelSpecifics, payload: 'item x');
+        .show(id, mobileNo, msg, platformChannelSpecifics, payload: mobileNo);
   }
 }
