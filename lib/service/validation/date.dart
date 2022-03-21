@@ -134,11 +134,12 @@ class Date {
 
   static String getMsgDate() {
     String datetime = "";
-    var dateParse = DateTime.now();
-
-    String date = "${dateParse.day}/${dateParse.month}/${dateParse.year}";
-    return datetime = date;
+    DateTime now = DateTime.now();
+    datetime = DateFormat.yMd().add_jm().format(now);
+    return datetime;
   }
+
+  static getdatatimeString() {}
 }
 
 class RemainingTime {

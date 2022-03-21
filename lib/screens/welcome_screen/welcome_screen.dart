@@ -55,7 +55,7 @@ class StartState extends State<WelcomeScreen> {
               child: Padding(
                 padding: EdgeInsets.only(bottom: size.height * 0.05),
                 child: Text(
-                  "Scure SMS Service ",
+                  "Secure SMS Service ",
                   style: GoogleFonts.balsamiqSans(
                       fontWeight: FontWeight.w500,
                       fontSize: size.width * 0.04,
