@@ -8,3 +8,5 @@ const kmenucolor = Color(0xFF603a99);
 const kbackgoundcolor = Color(0xFF232F34);
 const kbackgoundcolorlight = Color(0xFF3d4e54);
 const kdefualtfontcolor = Colors.white;
+
+const String initensymbol = '?';

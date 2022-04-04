@@ -2,6 +2,7 @@ import 'dart:math';
 import 'package:smsapp/models/chat_model.dart';
 import 'package:smsapp/models/msg_model.dart';
 import 'package:smsapp/service/database/localdb_handeler.dart';
+import 'package:smsapp/service/encryption/message_encrypt.dart';
 import 'package:smsapp/service/notrification_service/notification_service.dart';
 import 'package:smsapp/service/validation/date.dart';
 import 'package:telephony/telephony.dart';
@@ -20,11 +21,12 @@ class SmsService {
   }
 
   static listnSMS(SmsMessage message) async {
+    CryptoSMS cryptoSMS = CryptoSMS();
     String adress = message.address!;
     String mobileNo = adress.replaceAll('+94', '0');
-
+    String decryptmessage = cryptoSMS.decryptText(message.body!);
     NotificationService.shownotication(
-        Date.getTimeId(), mobileNo, message.body!);
+        Date.getTimeId(), mobileNo, decryptmessage);
     print(message.body);
     print(message.address);
     print(mobileNo + "-----------------------------------");

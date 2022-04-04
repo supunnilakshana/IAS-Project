@@ -19,7 +19,6 @@ class StartState extends State<WelcomeScreen> {
   @override
   void initState() {
     super.initState();
-
     startTimer();
   }
 

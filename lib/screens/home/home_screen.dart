@@ -5,6 +5,7 @@ import 'package:smsapp/constans/constansts.dart';
 import 'package:smsapp/models/chat_model.dart';
 import 'package:smsapp/screens/chat/singel_schat_screen.dart';
 import 'package:smsapp/service/database/localdb_handeler.dart';
+import 'package:smsapp/service/encryption/message_encrypt.dart';
 import 'package:smsapp/service/notrification_service/notification_service.dart';
 import 'package:smsapp/service/sms_service/sms_service.dart';
 import 'package:smsapp/service/validation/date.dart';
@@ -25,6 +26,7 @@ class _HomeScreenState extends State<HomeScreen> {
   late Future<List<ChatModel>> futureData;
   final telephony = Telephony.instance;
   String _message = "";
+  CryptoSMS _cryptoSMS = CryptoSMS();
   @override
   void initState() {
     loaddata();
@@ -117,6 +119,8 @@ class _HomeScreenState extends State<HomeScreen> {
                               ScrollViewKeyboardDismissBehavior.onDrag,
                           itemCount: data.length,
                           itemBuilder: (context, index) {
+                            String resultmsg = _cryptoSMS
+                                .decryptText(data[index].lastmessage!);
                             String imgurl = "assets/icons/user3.png";
                             if (data[index].imgurl == null ||
                                 data[index].imgurl == "") {
@@ -169,7 +173,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                       Expanded(
                                         child: Text(
                                           data[index].lastmessage != null
-                                              ? data[index].lastmessage!
+                                              ? resultmsg
                                               : "Draft message",
                                           style: isread
                                               ? TextStyle(

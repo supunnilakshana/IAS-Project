@@ -13,6 +13,7 @@ import 'package:smsapp/models/chat_model.dart';
 import 'package:smsapp/models/msg_model.dart';
 import 'package:smsapp/screens/home/home_screen.dart';
 import 'package:smsapp/service/database/localdb_handeler.dart';
+import 'package:smsapp/service/encryption/message_encrypt.dart';
 import 'package:smsapp/service/notrification_service/notification_service.dart';
 import 'package:smsapp/service/sms_service/sms_service.dart';
 import 'package:smsapp/service/validation/date.dart';
@@ -39,6 +40,7 @@ class _SingelChatScreenState extends State<SingelChatScreen> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   TextEditingController mobileNocon = TextEditingController();
   TextEditingController messegecon = TextEditingController();
+  CryptoSMS _cryptoSMS = CryptoSMS();
   late bool isnewchat;
   late Future<List<MsgModel>> futureData;
   Random random = new Random();
@@ -224,6 +226,8 @@ class _SingelChatScreenState extends State<SingelChatScreen> {
                                             .onDrag,
                                     itemCount: data.length,
                                     itemBuilder: (context, indext) {
+                                      String resultmsg = _cryptoSMS
+                                          .decryptText(data[indext].message);
                                       if (data[indext].msgtype == 0) {
                                         return Card(
                                           color: kbackgoundcolor,
@@ -249,7 +253,7 @@ class _SingelChatScreenState extends State<SingelChatScreen> {
                                                         const EdgeInsets.all(
                                                             10),
                                                     child: Text(
-                                                      data[indext].message,
+                                                      resultmsg,
                                                       overflow:
                                                           TextOverflow.ellipsis,
                                                       maxLines: 100,
@@ -302,7 +306,7 @@ class _SingelChatScreenState extends State<SingelChatScreen> {
                                                         const EdgeInsets.all(
                                                             10),
                                                     child: Text(
-                                                      data[indext].message,
+                                                      resultmsg,
                                                       overflow:
                                                           TextOverflow.ellipsis,
                                                       maxLines: 100,
@@ -378,7 +382,8 @@ class _SingelChatScreenState extends State<SingelChatScreen> {
                                   });
                                 };
                                 if (_formKey.currentState!.validate()) {
-                                  message = messegecon.text;
+                                  final textmsg = messegecon.text;
+                                  message = _cryptoSMS.ecryptText(textmsg);
                                   if (isnewchat && isfirsttap) {
                                     mobileNo = mobileNocon.text;
                                     int res =
@@ -412,14 +417,13 @@ class _SingelChatScreenState extends State<SingelChatScreen> {
                                   } else {
                                     mobileNo = widget.mobile;
                                   }
-                                  chatModel.lastmessage = messegecon.text;
+                                  chatModel.lastmessage = message;
 
                                   await SmsService.sendSMS(
-                                      mobileNo, messegecon.text, listener);
+                                      mobileNo, message, listener);
                                   MsgModel msgModel = MsgModel(
                                       mobileno: mobileNo,
-                                      message:
-                                          messegecon.text, // messegecon.text,
+                                      message: message, // messegecon.text,
                                       status: "sent",
                                       hash: "hash",
                                       msgtype: 0,
